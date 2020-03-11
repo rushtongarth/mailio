@@ -1,7 +1,10 @@
-from collections.abc import MutableSequence
+from src import GoogleObj
+import operator as op
+import numpy as np
 
+qstr = " ".join(["from:no-reply@arxiv.org", "subject:(cs daily)",])
 
-class messageList(MutableSequence):
+class messageList(GoogleObj):
     def __init__(self,credentials, **kwargs):
         self.start = kwargs.pop('start',-1)
         self.end = kwargs.pop('end',0)
