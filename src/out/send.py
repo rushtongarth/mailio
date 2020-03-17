@@ -2,27 +2,54 @@ from base64 import urlsafe_b64encode
 from email.mime.text import MIMEText
 from src import GoogleObj
 
-class Sender(GoogleObj):
+class MailOutput(GoogleObj):
     def __init__(self, creds, **kwargs):
         super().__init__(creds, **kwargs)
         self._body = ''
-        self._to = ''
-        self._from = ''
+        self._recipient = ''
+        self._sender = ''
 
     @property
     def body(self):
         return self._body
+
     @body.setter
     def body(self, value):
         self._body = value
+
     @body.deleter
     def body(self):
         del self._body
 
-    def __call__(self, subject, body, mess_to, mess_from):
+    @property
+    def recipient(self):
+        return self._recipient
+
+    @recipient.setter
+    def recipient(self, value):
+        self._recipient = value
+
+    @recipient.deleter
+    def recipient(self):
+        del self._recipient
+
+    @property
+    def sender(self):
+        return self._sender
+
+    @sender.setter
+    def sender(self, value):
+        self._sender = value
+
+    @sender.deleter
+    def sender(self):
+        del self._sender
+
+    def __call__(self, subject, body, recipient, sender):
+        
         message = MIMEText(body, 'html')
-        message['to'] = mess_to
-        message['from'] = mess_from
+        message['to'] = recipient
+        message['from'] = sender
         message['subject'] = subject
         mstr = message.as_bytes()
         msg = dict(raw=urlsafe_b64encode(mstr).decode())
