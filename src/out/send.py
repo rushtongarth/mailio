@@ -4,10 +4,10 @@ from src import GoogleObj
 
 class MailOutput(GoogleObj):
     def __init__(self, creds, **kwargs):
+        self.body = kwargs.pop("body", "")
+        self.recipient = kwargs.pop("recipient", "")
+        self.sender = kwargs.pop("sender", "")
         super().__init__(creds, **kwargs)
-        self._body = ''
-        self._recipient = ''
-        self._sender = ''
 
     @property
     def body(self):
@@ -45,12 +45,15 @@ class MailOutput(GoogleObj):
     def sender(self):
         del self._sender
 
-    def __call__(self, subject, body, recipient, sender):
+    def __call__(self, subject=None, **kwargs):
         
-        message = MIMEText(body, 'html')
-        message['to'] = recipient
-        message['from'] = sender
-        message['subject'] = subject
+        self.body = kwargs.pop("body", self.body)
+        self.recipient = kwargs.pop("recipient", self.recipient)
+        self.sender = kwargs.pop("sender", self.sender)
+        message = MIMEText(self.body, 'html')
+        message['to'] = self.recipient
+        message['from'] = self.sender
+        message['subject'] = subject or 'Test'
         mstr = message.as_bytes()
         msg = dict(raw=urlsafe_b64encode(mstr).decode())
         gmess = self.service.users().messages()
